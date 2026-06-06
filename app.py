@@ -1,23 +1,26 @@
 from flask import Flask, render_template, request, redirect, url_for
 from pymongo import MongoClient
 import re
+import os
+import ssl  # <- Anula de raíz el bloqueo de certificados en tu PC
 
 app = Flask(__name__)
 
-# --- CONFIGURACIÓN CON MÁXIMA COMPATIBILIDAD SSL ---
-MONGO_URI = "mongodb+srv://santibautista720_db_user:C603b1ip8J1SdKne@taller-sena.qjey0k8.mongodb.net/?appName=Taller-Sena"
+# --- TU NUEVA CADENA DE CONEXIÓN CON LA CONTRASEÑA INTEGRADA ---
+MONGO_URI = "mongodb+srv://santibautista720_db_user:aaRlvwfm0xrIml6P@taller-sena.qjey0k8.mongodb.net/?appName=Taller-Sena"
 
 try:
-    # Parámetros modernos para saltar bloqueos de certificados en redes locales o Windows
+    # Parámetros definitivos para ignorar la verificación estricta local de certificados SSL
     client = MongoClient(
-        MONGO_URI, 
+        MONGO_URI,
         serverSelectionTimeoutMS=5000,
-        tlsAllowInvalidCertificates=True
+        ssl=True,
+        ssl_cert_reqs=ssl.CERT_NONE  # <- Apaga el control SSL local que te tiraba error
     )
     db = client['gestion_universitaria']
     coleccion = db['estudiantes']
     
-    # Validar conexión inmediata con el cluster de Atlas
+    # Comprobar la conexión real con el clúster de Atlas
     client.server_info()
     conexion_error = None
     print("[SUCCESS] NEON NEXUS CONNECTED TO MONGODB ATLAS")
@@ -34,7 +37,6 @@ def index():
     if conexion_error:
         return render_template('error.html', error=conexion_error)
     try:
-        # Trae todos los estudiantes organizados por mayor puntaje en el juego
         todos = list(coleccion.find({}).sort("puntuacion", -1))
         mensaje = request.args.get('mensaje', '')
         return render_template('index.html', estudiantes=todos, mensaje=mensaje)
@@ -57,7 +59,7 @@ def registrar():
             return redirect(url_for('index', mensaje="Error: Transmisión de datos incompleta."))
         
         if coleccion.find_one({"documento": doc}):
-            return redirect(url_for('index', mensaje=f"Error: El ID {doc} ya existe en la base de datos."))
+            return redirect(url_for('index', mensaje=f"Error: El ID {doc} ya existe en el núcleo."))
 
         coleccion.insert_one({
             "documento": doc, 
@@ -72,4 +74,5 @@ def registrar():
         return render_template('error.html', error=e)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host='0.0.0.0', port=port, debug=True)
