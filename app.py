@@ -1,26 +1,23 @@
 from flask import Flask, render_template, request, redirect, url_for
 from pymongo import MongoClient
-import re
 import os
-import ssl  # <- Anula de raíz el bloqueo de certificados en tu PC
 
 app = Flask(__name__)
 
-# --- TU NUEVA CADENA DE CONEXIÓN CON LA CONTRASEÑA INTEGRADA ---
+# --- CONFIGURACIÓN DE CONEXIÓN CON CONTRASEÑA NUEVA Y PARÁMETRO CORRECTO ---
 MONGO_URI = "mongodb+srv://santibautista720_db_user:aaRlvwfm0xrIml6P@taller-sena.qjey0k8.mongodb.net/?appName=Taller-Sena"
 
 try:
-    # Parámetros definitivos para ignorar la verificación estricta local de certificados SSL
+    # tlsAllowInvalidCertificates es el nombre correcto y moderno que no te va a dar error de sintaxis
     client = MongoClient(
-        MONGO_URI,
+        MONGO_URI, 
         serverSelectionTimeoutMS=5000,
-        ssl=True,
-        ssl_cert_reqs=ssl.CERT_NONE  # <- Apaga el control SSL local que te tiraba error
+        tlsAllowInvalidCertificates=True
     )
     db = client['gestion_universitaria']
     coleccion = db['estudiantes']
     
-    # Comprobar la conexión real con el clúster de Atlas
+    # Validamos la conexión con el servidor de Atlas
     client.server_info()
     conexion_error = None
     print("[SUCCESS] NEON NEXUS CONNECTED TO MONGODB ATLAS")
