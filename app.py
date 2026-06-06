@@ -1,19 +1,24 @@
 from flask import Flask, render_template, request, redirect, url_for
 from pymongo import MongoClient
 import os
+import certifi  # <- Fuerza a usar el almacén de certificados actualizado de certifi
 
 app = Flask(__name__)
 
-# --- CADENA DE CONEXIÓN LIMPIA Y COMPATIBLE CON RENDER Y ATLAS ---
-MONGO_URI = "mongodb+srv://santibautista720_db_user:aaRlvwfm0xrIml6P@taller-sena.qjey0k8.mongodb.net/gestion_universitaria?retryWrites=true&w=majority"
+# --- CONFIGURACIÓN DE CONEXIÓN CON TU CONTRASEÑA ---
+MONGO_URI = "mongodb+srv://santibautista720_db_user:aaRlvwfm0xrIml6P@taller-sena.qjey0k8.mongodb.net/gestion_universitaria?retryWrites=true&w=majority&appName=Taller-Sena"
 
 try:
-    # Render maneja los certificados TLS automáticamente a nivel de sistema, no hay que forzar nada raro
-    client = MongoClient(MONGO_URI, serverSelectionTimeoutMS=10000)
+    # Le inyectamos tlsCAFile para que use los certificados de certifi instalados en Render
+    client = MongoClient(
+        MONGO_URI, 
+        serverSelectionTimeoutMS=10000,
+        tlsCAFile=certifi.where()  # <- SOLUCIÓN AL HANDSHAKE FALLIDO
+    )
     db = client['gestion_universitaria']
     coleccion = db['estudiantes']
     
-    # Comprobar la conexión real
+    # Validamos la conexión con el clúster
     client.server_info()
     conexion_error = None
     print("[SUCCESS] NEON NEXUS CONNECTED TO MONGODB ATLAS")
