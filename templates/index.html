@@ -2,64 +2,484 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Gestión de Estudiantes</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEON NEXUS // CENTRAL CORE</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <style>
-        body { font-family: Arial, sans-serif; margin: 40px; background-color: #f4f4f9; color: #333; }
-        h1, h2 { color: #444; }
-        form { background: white; padding: 20px; border-radius: 5px; box-shadow: 0 0 10px rgba(0,0,0,0.1); max-width: 400px; }
-        input { display: block; width: 100%; margin-bottom: 10px; padding: 8px; box-sizing: border-box; }
-        button { background: #28a745; color: white; border: none; padding: 10px; width: 100%; cursor: pointer; font-size: 16px; }
-        button:hover { background: #218838; }
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; background: white; }
-        th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
-        th { background-color: #007bff; color: white; }
-        .alert { padding: 10px; background: #d4edda; color: #155724; margin-bottom: 15px; border-radius: 4px; }
+        :root {
+            --neon-cyan: #00f0ff;
+            --neon-magenta: #ff007f;
+            --neon-green: #39ff14;
+            --dark-bg: #0a0a12;
+            --panel-bg: rgba(16, 16, 28, 0.75);
+            --grid-color: rgba(0, 240, 255, 0.03);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+        }
+
+        body {
+            background-color: var(--dark-bg);
+            background-image: 
+                linear-gradient(to right, var(--grid-color) 1px, transparent 1px),
+                linear-gradient(to bottom, var(--grid-color) 1px, transparent 1px);
+            background-size: 30px 30px;
+            font-family: 'Share Tech Mono', monospace;
+            color: #ffffff;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: " ";
+            display: block;
+            position: fixed;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            z-index: 99999;
+            background-size: 100% 3px, 3px 100%;
+            pointer-events: none;
+        }
+
+        header {
+            text-align: center;
+            padding: 30px 10px;
+            background: rgba(5, 5, 10, 0.9);
+            border-bottom: 2px solid var(--neon-cyan);
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.3);
+            margin-bottom: 40px;
+        }
+
+        header h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3rem;
+            font-weight: 900;
+            color: #ffffff;
+            text-shadow: 0 0 10px var(--neon-cyan), 0 0 20px var(--neon-cyan);
+            letter-spacing: 5px;
+        }
+
+        header p {
+            color: var(--neon-magenta);
+            text-shadow: 0 0 5px var(--neon-magenta);
+            font-size: 1.1rem;
+            margin-top: 5px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: 1fr 1.5fr;
+            gap: 30px;
+        }
+
+        @media (max-width: 1024px) {
+            .container { grid-template-columns: 1fr; }
+        }
+
+        .panel {
+            background: var(--panel-bg);
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            border-radius: 4px;
+            padding: 25px;
+            position: relative;
+            box-shadow: inset 0 0 15px rgba(0, 240, 255, 0.05);
+            backdrop-filter: blur(5px);
+        }
+
+        .panel::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 10px; height: 10px;
+            border-top: 2px solid var(--neon-cyan);
+            border-left: 2px solid var(--neon-cyan);
+        }
+
+        .panel::after {
+            content: '';
+            position: absolute;
+            bottom: 0; right: 0;
+            width: 10px; height: 10px;
+            border-bottom: 2px solid var(--neon-magenta);
+            border-right: 2px solid var(--neon-magenta);
+        }
+
+        h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: var(--neon-cyan);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border-bottom: 1px dashed rgba(0, 240, 255, 0.3);
+            padding-bottom: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+            position: relative;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 6px;
+            color: #aaa;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+        }
+
+        input {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(0, 240, 255, 0.4);
+            padding: 12px 15px;
+            color: #ffffff;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 1.1rem;
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--neon-magenta);
+            box-shadow: 0 0 10px rgba(255, 0, 127, 0.4);
+            background: rgba(15, 0, 15, 0.6);
+        }
+
+        .btn {
+            width: 100%;
+            background: transparent;
+            border: 1px solid var(--neon-green);
+            color: var(--neon-green);
+            padding: 15px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        .btn:hover {
+            background: rgba(57, 255, 20, 0.1);
+            box-shadow: 0 0 15px rgba(57, 255, 20, 0.4);
+            text-shadow: 0 0 5px #fff;
+        }
+
+        /* MINIJUEGO CYBERPUNK */
+        #game-container {
+            margin-bottom: 30px;
+            background: rgba(5, 5, 10, 0.8);
+            border: 1px solid var(--neon-magenta);
+            padding: 20px;
+            text-align: center;
+        }
+
+        .game-screen {
+            height: 120px;
+            background: #000;
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            margin: 15px 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        .word-to-match {
+            font-size: 1.8rem;
+            color: var(--neon-cyan);
+            font-weight: bold;
+            letter-spacing: 4px;
+            text-shadow: 0 0 8px var(--neon-cyan);
+        }
+
+        .game-input-zone {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-game {
+            background: transparent;
+            border: 1px solid var(--neon-magenta);
+            color: var(--neon-magenta);
+            padding: 0 20px;
+            cursor: pointer;
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        .btn-game:hover {
+            background: rgba(255, 0, 127, 0.2);
+            box-shadow: 0 0 10px var(--neon-magenta);
+        }
+
+        .score-display {
+            font-size: 1.3rem;
+            color: var(--neon-green);
+            text-shadow: 0 0 5px var(--neon-green);
+            margin-top: 10px;
+        }
+
+        /* NOTIFICACIONES */
+        .alert {
+            background: rgba(0, 240, 255, 0.1);
+            border-left: 4px solid var(--neon-cyan);
+            padding: 15px;
+            margin-bottom: 25px;
+            font-size: 1.1rem;
+            color: var(--neon-cyan);
+            text-shadow: 0 0 5px rgba(0, 240, 255, 0.5);
+            animation: pulse 2s infinite alternate;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 5px rgba(0, 240, 255, 0.2); }
+            100% { box-shadow: 0 0 15px rgba(0, 240, 255, 0.5); }
+        }
+
+        /* TABLA CYBERPUNK */
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            background: rgba(0, 0, 0, 0.4);
+        }
+
+        th {
+            background: rgba(0, 240, 255, 0.1);
+            color: var(--neon-cyan);
+            font-family: 'Orbitron', sans-serif;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+            padding: 15px 12px;
+            border-bottom: 2px solid var(--neon-cyan);
+        }
+
+        td {
+            padding: 14px 12px;
+            border-bottom: 1px solid rgba(0, 240, 255, 0.1);
+            font-size: 1.05rem;
+        }
+
+        tr:hover {
+            background: rgba(255, 0, 127, 0.04);
+            border-left: 2px solid var(--neon-magenta);
+        }
+
+        .badge-score {
+            display: inline-block;
+            background: rgba(57, 255, 20, 0.15);
+            color: var(--neon-green);
+            border: 1px solid var(--neon-green);
+            padding: 2px 8px;
+            border-radius: 3px;
+            font-weight: bold;
+            text-shadow: 0 0 4px rgba(57, 255, 20, 0.5);
+        }
+
+        .glitch-text {
+            position: relative;
+        }
+
+        .glitch-text::before {
+            content: attr(data-text);
+            position: absolute;
+            left: -2px;
+            text-shadow: 1px 0 blue;
+            top: 0;
+            color: white;
+            background: var(--dark-bg);
+            overflow: hidden;
+            clip: rect(0, 900px, 0, 0); 
+            animation: noise-anim-2 3s infinite linear alternate-reverse;
+        }
+
+        @keyframes noise-anim-2 {
+            0% { clip: rect(12px, 9999px, 74px, 0); }
+            100% { clip: rect(34px, 9999px, 5px, 0); }
+        }
     </style>
 </head>
 <body>
 
-    <h1>Sistema de Gestión Universitaria</h1>
-    
-    {% if mensaje %}
-        <div class="alert">{{ mensaje }}</div>
-    {% endif %}
+    <header>
+        <h1 class="glitch-text" data-text="NEON NEXUS">NEON NEXUS</h1>
+        <p>// TERMINAL DE REGISTRO CUÁNTICO UNIVERSITARIO</p>
+    </header>
 
-    <h2>Registrar Estudiante</h2>
-    <form action="/registrar" methods="POST">
-        <input type="text" name="documento" placeholder="Documento de Identidad" required>
-        <input type="text" name="nombre" placeholder="Nombre Completo" required>
-        <input type="email" name="correo" placeholder="Correo Electrónico" required>
-        <input type="text" name="programa" placeholder="Programa Académico" required>
-        <input type="text" name="ficha" placeholder="Número de Ficha" required>
-        <input type="number" name="puntuacion" placeholder="Puntuación Juego" required>
-        <button type="submit">Guardar Estudiante</button>
-    </form>
+    <div class="container">
+        <div class="left-column">
+            
+            {% if mensaje %}
+                <div class="alert">>> REPORTE DEL SISTEMA: {{ mensaje }}</div>
+            {% endif %}
 
-    <h2>Estudiantes Registrados</h2>
-    <table>
-        <thead>
-            <tr>
-                <th>Documento</th>
-                <th>Nombre</th>
-                <th>Correo</th>
-                <th>Programa</th>
-                <th>Ficha</th>
-                <th>Puntuación</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for est in estudiantes %}
-            <tr>
-                <td>{{ est.documento }}</td>
-                <td>{{ est.nombre }}</td>
-                <td>{{ est.correo }}</td>
-                <td>{{ est.programa }}</td>
-                <td>{{ est.ficha }}</td>
-                <td>{{ est.puntuacion }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+            <div id="game-container" class="panel">
+                <h2>[MINIGAME] CORRUPCIÓN DE NODOS</h2>
+                <p style="color: #aaa; font-size: 0.9rem;">Escribe rápido la palabra de seguridad para extraer puntos de datos:</p>
+                
+                <div class="game-screen">
+                    <div id="target-word" class="word-to-match">NEXUS</div>
+                    <div id="game-timer" style="color: var(--neon-magenta); margin-top: 8px;">TIEMPO: 5.0s</div>
+                </div>
 
+                <div class="game-input-zone">
+                    <input type="text" id="game-input" placeholder="Escribe aquí el código de bypass..." autocomplete="off">
+                    <button type="button" class="btn-game" id="btn-start-game">START</button>
+                </div>
+                
+                <div class="score-display">PUNTOS EXTRAÍDOS: <span id="current-score-val">0</span> PTOS</div>
+            </div>
+
+            <div class="panel">
+                <h2>// INYECTAR NUEVO ESTUDIANTE</h2>
+                <form action="/registrar" method="POST" id="main-form">
+                    <div class="form-group">
+                        <label>Identificación Ciudadana (ID)</label>
+                        <input type="text" name="documento" required placeholder="Ej: 1002394..." autocomplete="off">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Nombre del Operador</label>
+                        <input type="text" name="nombre" required placeholder="Ej: Santiago Bautista" autocomplete="off">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Canal de Comunicación (Correo)</label>
+                        <input type="email" name="correo" required placeholder="Ej: user@nexus.com" autocomplete="off">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Programa de Especialización</label>
+                        <input type="text" name="programa" required placeholder="Ej: Ingeniería de Sistemas" autocomplete="off">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Ficha de Enlace</label>
+                        <input type="text" name="ficha" required placeholder="Ej: 2839401" autocomplete="off">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Puntuación del Hackeo (Puntos Obtenidos)</label>
+                        <input type="number" name="puntuacion" id="form-puntuacion-input" value="0" readonly style="color: var(--neon-green); font-weight: bold; border-color: var(--neon-green);">
+                        <small style="color: #777; display:block; margin-top:4px;">* Juega arriba para subir este valor antes de enviar.</small>
+                    </div>
+
+                    <button type="submit" class="btn">Subir Datos al Clúster</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="panel">
+            <h2>// BASE DE DATOS CENTRAL DEL CORE</h2>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID Documento</th>
+                            <th>Operador</th>
+                            <th>Correo Electrónico</th>
+                            <th>Especialización</th>
+                            <th>Ficha</th>
+                            <th>Puntuación</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for est in estudiantes %}
+                        <tr>
+                            <td style="color: var(--neon-cyan);">{{ est.documento }}</td>
+                            <td style="font-weight: bold;">{{ est.nombre }}</td>
+                            <td style="color: #aaa;">{{ est.correo }}</td>
+                            <td>{{ est.programa }}</td>
+                            <td style="color: var(--neon-magenta);">{{ est.ficha }}</td>
+                            <td><span class="badge-score">{{ est.puntuacion }} XP</span></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const palabrasSistema = ["QUANTUM", "CYBER", "CYBERPUNK", "DATABASE", "FLASK", "MONGODB", "MATRIX", "FIREWALL", "NODE", "MAINFRAME", "ROUTER", "KUBERNETES", "PYTHON", "DOCKER"];
+        let score = 0;
+        let gameActive = false;
+        let timeLeft = 5.0;
+        let gameInterval = null;
+
+        const targetWordElement = document.getElementById('target-word');
+        const gameInputElement = document.getElementById('game-input');
+        const btnStart = document.getElementById('btn-start-game');
+        const timerElement = document.getElementById('game-timer');
+        const currentScoreVal = document.getElementById('current-score-val');
+        const formPuntuacionInput = document.getElementById('form-puntuacion-input');
+
+        function selectNewWord() {
+            const index = Math.floor(Math.random() * palabrasSistema.length);
+            targetWordElement.innerText = palabrasSistema[index];
+        }
+
+        function startGame() {
+            if(gameActive) return;
+            score = 0;
+            timeLeft = 5.0;
+            gameActive = true;
+            currentScoreVal.innerText = score;
+            gameInputElement.value = "";
+            gameInputElement.focus();
+            btnStart.innerText = "HACKING...";
+            selectNewWord();
+            
+            gameInterval = setInterval(() => {
+                timeLeft -= 0.1;
+                if(timeLeft <= 0) {
+                    endGame();
+                } else {
+                    timerElement.innerText = `TIEMPO: ${timeLeft.toFixed(1)}s`;
+                }
+            }, 100);
+        }
+
+        function endGame() {
+            clearInterval(gameInterval);
+            gameActive = false;
+            timerElement.innerText = "NODO COLAPSADO";
+            targetWordElement.innerText = "OVER";
+            btnStart.innerText = "RESTART";
+            formPuntuacionInput.value = score; 
+        }
+
+        gameInputElement.addEventListener('input', () => {
+            if(!gameActive) return;
+            if(gameInputElement.value.trim().toUpperCase() === targetWordElement.innerText) {
+                score += 100;
+                currentScoreVal.innerText = score;
+                gameInputElement.value = "";
+                timeLeft = Math.max(2.0, 5.0 - (score / 1000)); // Se vuelve más difícil dinámicamente
+                selectNewWord();
+            }
+        });
+
+        btnStart.addEventListener('click', startGame);
+    </script>
 </body>
 </html>
