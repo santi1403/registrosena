@@ -4,20 +4,16 @@ import os
 
 app = Flask(__name__)
 
-# --- CONFIGURACIÓN DE CONEXIÓN CON TU NUEVA CONTRASEÑA ---
-MONGO_URI = "mongodb+srv://santibautista720_db_user:aaRlvwfm0xrIml6P@taller-sena.qjey0k8.mongodb.net/?appName=Taller-Sena"
+# --- CADENA DE CONEXIÓN LIMPIA Y COMPATIBLE CON RENDER Y ATLAS ---
+MONGO_URI = "mongodb+srv://santibautista720_db_user:aaRlvwfm0xrIml6P@taller-sena.qjey0k8.mongodb.net/gestion_universitaria?retryWrites=true&w=majority"
 
 try:
-    # Usamos el parámetro correcto y moderno que Render acepta sin problemas
-    client = MongoClient(
-        MONGO_URI, 
-        serverSelectionTimeoutMS=5000,
-        tlsAllowInvalidCertificates=True
-    )
+    # Render maneja los certificados TLS automáticamente a nivel de sistema, no hay que forzar nada raro
+    client = MongoClient(MONGO_URI, serverSelectionTimeoutMS=10000)
     db = client['gestion_universitaria']
     coleccion = db['estudiantes']
     
-    # Validamos la conexión con el clúster de Atlas
+    # Comprobar la conexión real
     client.server_info()
     conexion_error = None
     print("[SUCCESS] NEON NEXUS CONNECTED TO MONGODB ATLAS")
