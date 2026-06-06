@@ -2,70 +2,21 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>SYSTEM BREACH - ERROR</title>
-    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <title>Error de Conexión</title>
     <style>
-        body {
-            background-color: #0a0000;
-            color: #ff0000;
-            font-family: 'Share Tech Mono', monospace;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            text-align: center;
-            flex-direction: column;
-        }
-        .error-container {
-            border: 2px solid #ff0000;
-            padding: 50px;
-            box-shadow: 0 0 30px #ff0000;
-            max-width: 600px;
-        }
-        .glitch {
-            font-size: 3rem;
-            text-transform: uppercase;
-            animation: glitch 1s infinite;
-        }
-        @keyframes glitch {
-            0% { transform: translate(0); }
-            20% { transform: translate(-5px, 5px); }
-            40% { transform: translate(-5px, -5px); }
-            60% { transform: translate(5px, 5px); }
-            80% { transform: translate(5px, -5px); }
-            100% { transform: translate(0); }
-        }
-        .code-box {
-            background: #1a0000;
-            padding: 15px;
-            margin-top: 20px;
-            border: 1px dashed #ff0000;
-            color: #ff8888;
-            font-size: 0.8rem;
-            text-align: left;
-        }
-        .btn-back {
-            margin-top: 30px;
-            padding: 10px 20px;
-            background: #ff0000;
-            color: #000;
-            text-decoration: none;
-            font-weight: bold;
-        }
+        body { font-family: Arial, sans-serif; text-align: center; padding: 50px; background-color: #fff5f5; color: #c53030; }
+        .container { max-width: 600px; margin: auto; padding: 30px; border: 2px solid #feb2b2; background: white; border-radius: 8px; }
+        pre { text-align: left; background: #edf2f7; padding: 15px; overflow-x: auto; color: #2d3748; border-radius: 4px; }
     </style>
 </head>
 <body>
-    <div class="error-container">
-        <div class="glitch">CORE BREACH</div>
-        <p>CONEXIÓN FALLIDA CON EL NODO MONGODB ATLAS</p>
-        <div class="code-box">
-            > [LOG]: EXCEPCIÓN DETECTADA <br>
-            > [STATUS]: SENTENCIA TRY-EXCEPT ACTIVADA <br>
-            > [DETALLE]: {{ error }}
-        </div>
+    <div class="container">
+        <h1>⚠️ Base de Datos Offline</h1>
+        <p>No se pudo establecer la conexión con MongoDB Atlas.</p>
+        <h3>Detalle del Error:</h3>
+        <pre>{{ error }}</pre>
         <br>
-        <a href="/" class="btn-back">REINTENTAR ACCESO</a>
+        <a href="/" style="text-decoration: none; color: #3182ce; font-weight: bold;">Reintentar Acceso</a>
     </div>
 </body>
 </html>
